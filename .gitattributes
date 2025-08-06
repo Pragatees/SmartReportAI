@@ -1,5 +1,0 @@
-backend/**/*.pt filter=lfs diff=lfs merge=lfs -text
-backend/**/*.zip filter=lfs diff=lfs merge=lfs -text
-backend/**/*.csv filter=lfs diff=lfs merge=lfs -text
-backend/**/*.json filter=lfs diff=lfs merge=lfs -text
-backend/**/*.pdf filter=lfs diff=lfs merge=lfs -text
