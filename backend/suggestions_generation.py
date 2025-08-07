@@ -24,22 +24,23 @@ async def generate_suggestions(input: SuggestionInput):
     insights_json = json.dumps(input.insights, indent=2)
 
     prompt = f"""
-You are a professional AI Suggestion Agent. Based on the following detailed insights extracted from a document, generate **exactly 5** clear, actionable, and prioritized recommendations that the user should follow to improve or resolve the identified issues.
+You are a professional AI Suggestion Agent. Based on each of the following **detailed insights**, generate **1 clear, focused, and actionable suggestion** to help the user overcome the issues or challenges mentioned in that specific insight.
 
-Each suggestion must:
-- Be directly tied to the insights.
-- Focus on productivity, optimization, compliance, or issue resolution.
-- Be written in plain, instructive language.
-- Avoid generic suggestions.
+⚠️ Important Instructions:
+- You must return the same number of suggestions as insights (1-to-1 mapping).
+- Each suggestion must directly resolve or improve the situation described in that insight.
+- Focus on optimization, resolution, mitigation, or actionable next steps.
+- Avoid vague or generic suggestions.
+- Each suggestion must be written in plain, instructive language.
+- If risk factors are mentioned, prioritize mitigating them.
 
-🛑 Strictly return **only** a JSON array of 5 strings like below — no extra text or explanations:
+✅ Strict Output Format:
+Return a **JSON array of strings**, with each element corresponding to the insight at the same index.
 
 [
-  "First prioritized suggestion",
-  "Second actionable suggestion",
-  "Third improvement tip",
-  "Fourth recommendation",
-  "Fifth key advice"
+  "Suggestion for Insight 1",
+  "Suggestion for Insight 2",
+  ...
 ]
 
 Input Insights:
@@ -73,8 +74,8 @@ Input Insights:
         suggestions_json = message_content[json_start:json_end]
 
         suggestions = json.loads(suggestions_json)
-        if not isinstance(suggestions, list) or len(suggestions) != 5:
-            raise HTTPException(status_code=500, detail="Expected a list of exactly 5 suggestions")
+        if not isinstance(suggestions, list) or len(suggestions) != len(input.insights):
+            raise HTTPException(status_code=500, detail="Mismatch in number of suggestions and insights")
 
         return {"suggestions": suggestions}
 

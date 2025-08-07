@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/generate-insights", tags=["Insights Generation"])
 
-PERPLEXITY_API_KEY = "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"
+PERPLEXITY_API_KEY = "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"  # ⚠️ MOVE TO ENV in production
 HEADERS = {
     "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
     "Content-Type": "application/json"
@@ -22,7 +22,7 @@ async def generate_insights(input: InsightInput):
         raise HTTPException(status_code=400, detail="Content and domain cannot be empty")
 
     prompt = f"""
-You are a highly skilled and domain-aware AI Insight Agent. Analyze the document below based on its **domain** and **full content**. Your goal is to extract deep, meaningful insights and present a domain-aware summary.
+You are a highly skilled and domain-aware AI Insight Agent. Analyze the document below based on its **domain** and **full content**. Your goal is to extract deep, meaningful insights, present a domain-aware summary, and highlight potential **risk factors** based on the document content and its context.
 
 Respond ONLY with a valid JSON object in the following exact format:
 
@@ -31,12 +31,14 @@ Respond ONLY with a valid JSON object in the following exact format:
     {{
       "title": "Insight Title 1",
       "description": "Detailed explanation with reasoning based on the content.",
-      "supporting_data": ["fact1", "value2", "related reference from content"]
+      "supporting_data": ["fact1", "value2", "related reference from content"],
+      "risk_factors": ["Risk 1", "Risk 2"]
     }},
     {{
       "title": "Insight Title 2",
       "description": "...",
-      "supporting_data": ["..."]
+      "supporting_data": ["..."],
+      "risk_factors": ["..."]
     }}
   ],
   "domain_summary": "A deep summary explaining what the document contains, its purpose, and major findings or concerns."
@@ -46,7 +48,15 @@ Respond ONLY with a valid JSON object in the following exact format:
 - DO NOT include any text before or after the JSON.
 - DO NOT explain the output.
 - Use only real data from the content — no hallucination or assumptions.
-- The response must be **valid, well-formatted JSON** and include both required fields.
+- Risk factors must be based on the domain and content.
+- The response must be **valid, well-formatted JSON** and include all required fields.
+
+Domain-specific risk considerations:
+- For legal documents: highlight contractual, regulatory, or compliance-related risks.
+- For medical documents: highlight patient health, treatment, and procedural risks.
+- For financial reports: highlight economic, fraud, or operational risks.
+- For education: highlight learning, policy, or access-related risks.
+- For other domains: use logical domain-aware risk interpretations.
 
 Domain: {input.domain}
 Language: {input.language}
@@ -88,12 +98,17 @@ Content:
         if not isinstance(result["detailed_insights"], list):
             raise HTTPException(status_code=500, detail="detailed_insights must be a list")
 
+        # Validate risk_factors field in each insight
+        for insight in result["detailed_insights"]:
+            if "risk_factors" not in insight:
+                raise HTTPException(status_code=500, detail="Missing risk_factors in insights")
+
         return result
 
     except json.JSONDecodeError as je:
         logger.error(f"Invalid JSON response: {message_content}")
         logger.error(f"JSON decode error: {str(je)}")
-        raise HTTPException(status_code=422, Udetail={
+        raise HTTPException(status_code=422, detail={
             "message": "The model returned an invalid response format",
             "original_response": message_content,
             "error": str(je)

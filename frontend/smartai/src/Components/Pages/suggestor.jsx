@@ -10,6 +10,7 @@ import {
   FaInfoCircle,
   FaFilePdf,
   FaTrash,
+  FaCopy,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -53,6 +54,11 @@ const buttonVariants = {
   hover: { scale: 1.05, rotate: 3, boxShadow: "0px 6px 12px rgba(0,0,0,0.2)" },
   tap: { scale: 0.9 },
 };
+const cardVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 150, damping: 20 } },
+  hover: { scale: 1.02, boxShadow: "0px 8px 16px rgba(0,0,0,0.25)" },
+};
 
 const navItems = [
   { icon: <FaHome />, text: "Identifier Agent", path: "/home" },
@@ -76,6 +82,7 @@ export default function SuggestorAgent() {
   const [suggestionLoading, setSuggestionLoading] = useState(false);
   const [error, setError] = useState("");
   const [domain, setDomain] = useState(() => localStorage.getItem("pdfDomain") || "");
+  const [copiedIndex, setCopiedIndex] = useState(null);
 
   useEffect(() => {
     document.documentElement.className = theme;
@@ -105,10 +112,10 @@ export default function SuggestorAgent() {
     setSuggestionLoading(true);
     setError("");
     try {
-      const themeValue = localStorage.getItem("theme"); // Preserve theme
-      localStorage.clear(); // Clear all localStorage
+      const themeValue = localStorage.getItem("theme");
+      localStorage.clear();
       if (themeValue) {
-        localStorage.setItem("theme", themeValue); // Restore theme
+        localStorage.setItem("theme", themeValue);
       }
       setInsights([]);
       setSuggestions([]);
@@ -165,6 +172,12 @@ export default function SuggestorAgent() {
     }
   };
 
+  const handleCopy = (suggestion, index) => {
+    navigator.clipboard.writeText(suggestion);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 2000);
+  };
+
   return (
     <div
       className={`min-h-screen transition-colors duration-500 font-inter flex ${
@@ -193,11 +206,19 @@ export default function SuggestorAgent() {
           border-left: 3px solid #f97316;
         }
         .suggestion-card {
-          background-color: rgba(16, 185, 129, 0.1);
+          background-color: ${theme === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(31, 41, 55, 0.95)"};
           border: 2px solid #10b981;
           border-radius: 12px;
-          padding: 32px;
-          box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+          padding: 24px;
+          box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .suggestion-card:hover .copy-button {
+          opacity: 1;
+        }
+        .copy-button {
+          opacity: 0;
+          transition: opacity 0.3s ease;
         }
       `}</style>
 
@@ -316,9 +337,9 @@ export default function SuggestorAgent() {
       <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "ml-[280px]" : "ml-0"}`}>
         <motion.section className="max-w-7xl mx-auto p-8" variants={containerVariants} initial="hidden" animate="visible">
           <motion.header variants={itemVariants} className="mb-8 text-center">
-            <h1 className="text-3xl font-poppins font-bold gradient-text">NeuroLens Suggestor Agent</h1>
+            <h1 className="text-4xl font-poppins font-bold gradient-text">NeuroLens Suggestor Agent</h1>
             <p className={`mt-2 text-lg font-medium ${theme === "light" ? "text-gray-800" : "text-gray-300"}`}>
-              Your AI-generated suggestions will show below. Click the button to get suggestions.
+              Generate AI-powered suggestions based on your insights. Click below to get started.
             </p>
           </motion.header>
 
@@ -326,7 +347,7 @@ export default function SuggestorAgent() {
           <AnimatePresence>
             {domain ? (
               <motion.div
-                className={`p-5 rounded-lg mb-8 ${
+                className={`p-6 rounded-lg mb-8 ${
                   theme === "light" ? "bg-orange-50/80 border-orange-300" : "bg-gray-800 border-gray-600"
                 } border flex items-center justify-center space-x-3 shadow-md`}
                 initial={{ opacity: 0, y: 10 }}
@@ -351,11 +372,11 @@ export default function SuggestorAgent() {
           </AnimatePresence>
 
           {/* Get Suggestions Button */}
-          <motion.div className="mb-8 text-center">
+          <motion.div className="mb-12 text-center">
             <motion.button
               onClick={fetchSuggestions}
               disabled={suggestionLoading || !insights.length}
-              className={`px-8 py-3 rounded-full gradient-button shadow-lg font-semibold ${
+              className={`px-10 py-4 rounded-full gradient-button shadow-lg text-lg font-semibold ${
                 suggestionLoading || !insights.length
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:from-orange-600 hover:to-emerald-600"
@@ -367,7 +388,7 @@ export default function SuggestorAgent() {
               {suggestionLoading ? (
                 <>
                   <svg
-                    className="animate-spin mr-2 inline-block h-5 w-5 text-white align-middle"
+                    className="animate-spin mr-2 inline-block h-6 w-6 text-white align-middle"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -386,7 +407,7 @@ export default function SuggestorAgent() {
                       d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
                     />
                   </svg>
-                  Loading...
+                  Generating...
                 </>
               ) : (
                 "Get Suggestions"
@@ -397,28 +418,75 @@ export default function SuggestorAgent() {
           {/* Suggestions display */}
           <AnimatePresence>
             <motion.div
-              className="px-6 py-8 bg-white dark:bg-gray-900 rounded-xl shadow-lg w-full"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
+              className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
             >
               {error && (
-                <p className="text-center text-red-500 mb-4 font-semibold">{error}</p>
+                <motion.p
+                  className="col-span-full text-center text-red-500 text-lg font-semibold"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                >
+                  {error}
+                </motion.p>
               )}
               {!error && !suggestionLoading && suggestions.length === 0 && (
-                <p className="text-center text-gray-500 font-medium">
-                  No suggestions generated yet.
-                </p>
+                <motion.p
+                  className="col-span-full text-center text-gray-500 text-lg font-medium"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                >
+                  No suggestions generated yet. Click "Get Suggestions" to start.
+                </motion.p>
               )}
-              {!error && suggestions.length > 0 && (
-                <ol className={`list-decimal list-inside space-y-4 text-gray-800 dark:text-gray-200`}>
-                  {suggestions.map((suggestion, index) => (
-                    <li key={index} className="text-lg leading-relaxed">
-                      {suggestion}
-                    </li>
-                  ))}
-                </ol>
-              )}
+              {!error &&
+                suggestions.length > 0 &&
+                suggestions.map((suggestion, index) => (
+                  <motion.div
+                    key={index}
+                    className="suggestion-card relative"
+                    variants={cardVariants}
+                    initial="hidden"
+                    animate="visible"
+                    whileHover="hover"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className={`text-lg font-semibold mb-2 ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>
+                          Suggestion {index + 1}
+                        </h3>
+                        <p className={`text-base leading-relaxed ${theme === "light" ? "text-gray-700" : "text-gray-300"}`}>
+                          {suggestion}
+                        </p>
+                      </div>
+                      <motion.button
+                        className={`copy-button p-2 rounded-full ${
+                          theme === "light" ? "bg-orange-100 text-orange-600" : "bg-gray-700 text-emerald-400"
+                        }`}
+                        onClick={() => handleCopy(suggestion, index)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        aria-label="Copy suggestion"
+                      >
+                        <FaCopy size={18} />
+                      </motion.button>
+                    </div>
+                    {copiedIndex === index && (
+                      <motion.span
+                        className="absolute top-2 right-2 text-sm text-emerald-500 font-medium"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                      >
+                        Copied!
+                      </motion.span>
+                    )}
+                  </motion.div>
+                ))}
             </motion.div>
           </AnimatePresence>
 

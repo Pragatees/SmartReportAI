@@ -516,19 +516,49 @@ export default function InsightAgentWithSidebar() {
                                   theme === "light" ? "text-gray-700" : "text-gray-300"
                                 }`}
                               >
-                                {insight.description}
+                                <strong>Description:</strong> {insight.description}
                               </p>
                               {insight.supporting_data?.length > 0 && (
-                                <ul className="list-disc list-inside mt-4 text-sm space-y-1">
-                                  {insight.supporting_data.map((item, k) => (
-                                    <li
-                                      key={k}
-                                      className={theme === "light" ? "text-gray-600" : "text-gray-400"}
-                                    >
-                                      {item}
-                                    </li>
-                                  ))}
-                                </ul>
+                                <>
+                                  <p
+                                    className={`text-sm font-medium mt-4 ${
+                                      theme === "light" ? "text-gray-700" : "text-gray-300"
+                                    }`}
+                                  >
+                                    <strong>Supporting Data:</strong>
+                                  </p>
+                                  <ul className="list-disc list-inside mt-2 text-sm space-y-1">
+                                    {insight.supporting_data.map((item, k) => (
+                                      <li
+                                        key={k}
+                                        className={theme === "light" ? "text-gray-600" : "text-gray-400"}
+                                      >
+                                        {item}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </>
+                              )}
+                              {insight.risk_factors?.length > 0 && (
+                                <>
+                                  <p
+                                    className={`text-sm font-medium mt-4 ${
+                                      theme === "light" ? "text-gray-700" : "text-gray-300"
+                                    }`}
+                                  >
+                                    <strong>Risk Factors:</strong>
+                                  </p>
+                                  <ul className="list-disc list-inside mt-2 text-sm space-y-1">
+                                    {insight.risk_factors.map((risk, k) => (
+                                      <li
+                                        key={k}
+                                        className={theme === "light" ? "text-red-600" : "text-red-400"}
+                                      >
+                                        {risk}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </>
                               )}
                             </motion.div>
                           )}
@@ -544,7 +574,7 @@ export default function InsightAgentWithSidebar() {
                         theme === "light" ? "text-gray-700" : "text-gray-300"
                       }`}
                     >
-                      <strong>Summary:</strong> {summary}
+                      <strong>Domain Summary:</strong> {summary}
                     </motion.p>
                   )}
                 </motion.div>
