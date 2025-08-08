@@ -3,20 +3,13 @@ import {
   FaFilePdf,
   FaCopy,
   FaTimes,
-  FaSun,
-  FaMoon,
   FaUpload,
   FaCheckCircle,
   FaInfoCircle,
   FaSearch,
-  FaBars,
-  FaHome,
-  FaLightbulb,
-  FaRobot,
-  FaComments,
-  FaTrash,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import Sidebar from "./sidebar";
 
 // Brain SVG
 const Brain = ({ className }) => (
@@ -43,14 +36,6 @@ const Brain = ({ className }) => (
 );
 
 // Framer Motion variants
-const sidebarVariants = {
-  open: { width: "280px", opacity: 1, transition: { type: "spring", stiffness: 300, damping: 30 } },
-  closed: { width: 0, opacity: 0, transition: { type: "spring", stiffness: 300, damping: 30 } },
-};
-const navItemVariants = {
-  open: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 300, damping: 30 } },
-  closed: { opacity: 0, x: -20, transition: { duration: 0.2 } },
-};
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.3 } },
@@ -64,12 +49,11 @@ const buttonVariants = {
   tap: { scale: 0.9 },
 };
 
-const navItems = [
-  { icon: <FaHome />, text: "Identifier Agent", path: "/home" },
-  { icon: <FaLightbulb />, text: "Insightor Agent", path: "/insight" },
-  { icon: <FaRobot />, text: "Suggest Agent", path: "/suggest" },
-  { icon: <FaComments />, text: "Chatbot", path: "/bot" },
-  { icon: <FaFilePdf />, text: "Final Report", path: "/report" },
+const instructions = [
+  { icon: <FaUpload />, text: "Upload or drag a PDF or image file into the designated area." },
+  { icon: <FaFilePdf />, text: "Wait for NeuroLens to extract the text automatically." },
+  { icon: <FaSearch />, text: "Click 'Find Domain' to identify the document's domain." },
+  { icon: <FaCopy />, text: "Copy the extracted text or clear it to start over." },
 ];
 
 const PdfTextExtractor = () => {
@@ -274,13 +258,6 @@ const PdfTextExtractor = () => {
     }
   };
 
-  const instructions = [
-    { icon: <FaUpload />, text: "Upload or drag a PDF or image file into the designated area." },
-    { icon: <FaFilePdf />, text: "Wait for NeuroLens to extract the text automatically." },
-    { icon: <FaSearch />, text: "Click 'Find Domain' to identify the document's domain." },
-    { icon: <FaCopy />, text: "Copy the extracted text or clear it to start over." },
-  ];
-
   return (
     <div
       className={`min-h-screen transition-colors duration-500 font-inter flex ${
@@ -304,121 +281,18 @@ const PdfTextExtractor = () => {
           .gradient-button:hover {
             background: linear-gradient(90deg, #ea580c, #059669);
           }
-          .active-nav-item {
-            background: linear-gradient(90deg, rgba(249, 115, 22, 0.2), rgba(16, 185, 129, 0.2));
-            border-left: 3px solid #f97316;
-          }
         `}
       </style>
 
-      {/* Sidebar */}
-      <motion.div
-        className={`fixed top-0 left-0 h-full z-40 shadow-xl overflow-hidden ${
-          theme === "light" ? "bg-white border-r border-orange-100" : "bg-gray-800 border-r border-gray-700"
-        }`}
-        initial={sidebarOpen ? "open" : "closed"}
-        animate={sidebarOpen ? "open" : "closed"}
-        variants={sidebarVariants}
-      >
-        <div className="flex flex-col h-full w-[280px]">
-          <div className="p-4 flex flex-col items-center border-b dark:border-gray-700">
-            <div className="w-12 h-12 mb-2">
-              <Brain className="w-full h-full" />
-            </div>
-            <motion.h2
-              className="text-xl font-bold font-poppins gradient-text"
-              initial={{ opacity: 1 }}
-              animate={sidebarOpen ? { opacity: 1 } : { opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              NeuroLens
-            </motion.h2>
-          </div>
-          <ul className="flex-1 p-4 space-y-2 overflow-y-auto">
-            {navItems.map((item, index) => (
-              <motion.li
-                key={index}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`rounded-lg ${
-                  index === 0
-                    ? "active-nav-item"
-                    : theme === "light"
-                    ? "hover:bg-orange-50"
-                    : "hover:bg-gray-700"
-                }`}
-              >
-                <a
-                  href={item.path}
-                  className={`flex items-center p-3 space-x-3 ${
-                    theme === "light" ? "text-gray-700" : "text-gray-200"
-                  } font-medium`}
-                >
-                  <span className="text-xl">{item.icon}</span>
-                  <motion.span variants={navItemVariants} animate={sidebarOpen ? "open" : "closed"}>
-                    {item.text}
-                  </motion.span>
-                </a>
-              </motion.li>
-            ))}
-          </ul>
-          <div className="p-4 border-t dark:border-gray-700 space-y-2">
-            <motion.button
-              variants={buttonVariants}
-              whileHover="hover"
-              whileTap="tap"
-              onClick={handleClearData}
-              className={`w-full flex items-center justify-center p-2 rounded-lg ${
-                theme === "light" ? "hover:bg-orange-50 text-orange-600" : "hover:bg-gray-700 text-emerald-400"
-              } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
-              aria-label="Clear all data except theme"
-              disabled={isLoading}
-            >
-              <FaTrash size={20} />
-              <motion.span
-                className={`ml-3 ${theme === "light" ? "text-gray-700" : "text-gray-200"}`}
-                variants={navItemVariants}
-                animate={sidebarOpen ? "open" : "closed"}
-              >
-                Clear Data
-              </motion.span>
-            </motion.button>
-            <motion.button
-              variants={buttonVariants}
-              whileHover="hover"
-              whileTap="tap"
-              onClick={toggleTheme}
-              className={`w-full flex items-center justify-center p-2 rounded-lg ${
-                theme === "light" ? "hover:bg-orange-50 text-orange-600" : "hover:bg-gray-700 text-emerald-400"
-              }`}
-              aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
-            >
-              {theme === "light" ? <FaMoon size={20} /> : <FaSun size={20} />}
-              <motion.span
-                className={`ml-3 ${theme === "light" ? "text-gray-700" : "text-gray-200"}`}
-                variants={navItemVariants}
-                animate={sidebarOpen ? "open" : "closed"}
-              >
-                {theme === "light" ? "Dark Mode" : "Light Mode"}
-              </motion.span>
-            </motion.button>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* External Sidebar Toggle */}
-      <motion.button
-        onClick={toggleSidebar}
-        className={`fixed top-4 left-4 z-50 p-3 rounded-full shadow-lg transition-colors duration-300 ${
-          theme === "light" ? "bg-orange-100 text-orange-600 hover:bg-orange-200" : "bg-gray-700 text-emerald-400 hover:bg-gray-600"
-        }`}
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: sidebarOpen ? 280 : 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
-      >
-        <FaBars size={20} />
-      </motion.button>
+      {/* Sidebar Component */}
+      <Sidebar
+        theme={theme}
+        toggleTheme={toggleTheme}
+        sidebarOpen={sidebarOpen}
+        toggleSidebar={toggleSidebar}
+        handleClearData={handleClearData}
+        isLoading={isLoading}
+      />
 
       {/* Main Content */}
       <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "ml-[280px]" : "ml-0"}`}>
@@ -717,7 +591,7 @@ const PdfTextExtractor = () => {
                   </motion.button>
                 </motion.div>
               )}
-          </AnimatePresence>
+            </AnimatePresence>
           </div>
 
           {/* Footer */}
