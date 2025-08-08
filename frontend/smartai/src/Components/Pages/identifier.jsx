@@ -50,7 +50,7 @@ const buttonVariants = {
 };
 
 const instructions = [
-  { icon: <FaUpload />, text: "Upload or drag a PDF or image file into the designated area." },
+  { icon: <FaUpload />, text: "Upload or drag a PDF, Word, or image file into the designated area." },
   { icon: <FaFilePdf />, text: "Wait for NeuroLens to extract the text automatically." },
   { icon: <FaSearch />, text: "Click 'Find Domain' to identify the document's domain." },
   { icon: <FaCopy />, text: "Copy the extracted text or clear it to start over." },
@@ -173,11 +173,13 @@ const PdfTextExtractor = () => {
       "image/jpg",
       "image/tif",
       "image/tiff",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
     if (file && validTypes.includes(file.type)) {
       await extractTextFromFile(file);
     } else {
-      setError("Please upload a valid file (PDF, PNG, JPG, JPEG, TIF, TIFF).");
+      setError("Please upload a valid file (PDF, PNG, JPG, JPEG, TIF, TIFF, DOC, DOCX).");
       setPdfText("");
       setFileInfo(null);
       setDomain(null);
@@ -195,11 +197,13 @@ const PdfTextExtractor = () => {
       "image/jpg",
       "image/tif",
       "image/tiff",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
     if (file && validTypes.includes(file.type)) {
       await extractTextFromFile(file);
     } else {
-      setError("Please drop a valid file (PDF, PNG, JPG, JPEG, TIF, TIFF).");
+      setError("Please drop a valid file (PDF, PNG, JPG, JPEG, TIF, TIFF, DOC, DOCX).");
       setPdfText("");
       setFileInfo(null);
       setDomain(null);
@@ -311,7 +315,7 @@ const PdfTextExtractor = () => {
                 theme === "light" ? "text-gray-700" : "text-gray-300"
               }`}
             >
-              Extract text from PDFs or images and identify the document's domain with our AI-powered Identifier Agent. Upload or drag-and-drop your file to get started.
+              Extract text from PDFs, Word documents, or images and identify the document's domain with our AI-powered Identifier Agent. Upload or drag-and-drop your file to get started.
             </p>
             <motion.a
               href="/"
@@ -378,12 +382,12 @@ const PdfTextExtractor = () => {
                 theme === "light" ? "text-gray-800" : "text-gray-200"
               }`}
             >
-              Upload or Drop PDF/Image File
+              Upload or Drop PDF, Word, or Image File
             </label>
             <input
               id="file-upload"
               type="file"
-              accept="application/pdf,image/png,image/jpeg,image/jpg,image/tif,image/tiff"
+              accept="application/pdf,image/png,image/jpeg,image/jpg,image/tif,image/tiff,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               onChange={handleFileUpload}
               disabled={isLoading}
               className={`block w-full text-sm font-medium ${
@@ -520,7 +524,9 @@ const PdfTextExtractor = () => {
           <AnimatePresence>
             {domain && (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 
+
+10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 className={`p-6 rounded-lg mb-8 ${

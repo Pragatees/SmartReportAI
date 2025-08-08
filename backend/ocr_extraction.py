@@ -1,4 +1,3 @@
-# backend/ocr_extraction.py
 import fitz  # PyMuPDF
 import pytesseract
 from PIL import Image
@@ -6,6 +5,7 @@ import io
 import os
 from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import JSONResponse
+from docx import Document
 
 router = APIRouter(prefix="/ocr", tags=["OCR"])
 
@@ -42,10 +42,26 @@ async def extract_text(file: UploadFile = File(...)):
             img = Image.open(io.BytesIO(contents))
             text = pytesseract.image_to_string(img)
 
+        elif file_extension in [".doc", ".docx"]:
+            try:
+                doc = Document(io.BytesIO(contents))
+                for paragraph in doc.paragraphs:
+                    if paragraph.text.strip():
+                        text += paragraph.text + "\n"
+                for table in doc.tables:
+                    for row in table.rows:
+                        for cell in row.cells:
+                            if cell.text.strip():
+                                text += cell.text + "\n"
+            except Exception as doc_e:
+                print(f"Word document processing error: {doc_e}")
+                return JSONResponse(content={"error": f"Failed to process Word document: {str(doc_e)}"}, status_code=400)
+
         else:
             return JSONResponse(content={"error": f"Unsupported file format: {file_extension}"}, status_code=400)
 
         return {"filename": file.filename, "text": text}
 
     except Exception as e:
+        print(f"General error: {str(e)}")
         return JSONResponse(content={"error": str(e)}, status_code=500)
