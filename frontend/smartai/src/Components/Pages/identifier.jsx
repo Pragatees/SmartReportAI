@@ -51,7 +51,7 @@ const buttonVariants = {
 
 const instructions = [
   { icon: <FaUpload />, text: "Upload or drag a PDF, Word, or image file into the designated area." },
-  { icon: <FaFilePdf />, text: "Wait for NeuroLens to extract the text automatically." },
+  { icon: <FaFilePdf />, text: "Wait for Smart Report AI to extract the text automatically." },
   { icon: <FaSearch />, text: "Click 'Find Domain' to identify the document's domain." },
   { icon: <FaCopy />, text: "Copy the extracted text or clear it to start over." },
 ];
@@ -308,7 +308,7 @@ const PdfTextExtractor = () => {
         >
           <motion.div variants={itemVariants}>
             <h1 className="text-4xl sm:text-5xl font-poppins font-extrabold mb-4 gradient-text">
-              NeuroLens Identifier Agent
+              Smart Report AI Identifier Agent
             </h1>
             <p
               className={`text-lg sm:text-xl max-w-3xl mx-auto font-medium ${
@@ -324,7 +324,7 @@ const PdfTextExtractor = () => {
               whileTap={{ scale: 0.95 }}
               className="mt-6 inline-block px-8 py-3 rounded-full font-semibold text-white font-medium gradient-button shadow-lg"
             >
-              Learn More About NeuroLens
+              Learn More About Smart Report AI
             </motion.a>
           </motion.div>
         </motion.section>
@@ -609,7 +609,7 @@ const PdfTextExtractor = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 1 }}
           >
-            Powered by NeuroLens | &copy; {new Date().getFullYear()} xAI
+            Powered by Smart Report AI | &copy; {new Date().getFullYear()} xAI
           </motion.div>
         </section>
       </div>

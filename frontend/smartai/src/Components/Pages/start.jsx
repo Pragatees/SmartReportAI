@@ -240,7 +240,7 @@ const StartPage = () => {
                 <div className="absolute -inset-1 bg-orange-300/30 rounded-full opacity-0 group-hover:opacity-100 animate-pulse-ring"></div>
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-green-500 bg-clip-text text-transparent group-hover:from-orange-600 group-hover:to-green-600 transition-all duration-300">
-                NeuroLens
+                SmartReport AI
               </span>
             </div>
             
@@ -361,12 +361,12 @@ const StartPage = () => {
             </div>
             
             <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-orange-500 via-orange-400 to-green-500 bg-clip-text text-transparent animate-gradient-shift">
-              NeuroLens
+              SmartReport AI
             </h1>
             
             <div className="relative mb-6">
               <h2 className="text-xl md:text-3xl font-semibold text-orange-700 animate-pulse">
-                Multi-Agent AI for Intelligent Report Analysis
+                Multi-Agent Insight Engine for Personalized Report Understanding
               </h2>
               <div className="absolute -inset-2 bg-gradient-to-r from-orange-200/50 to-green-200/50 blur-lg opacity-50 animate-pulse"></div>
             </div>
@@ -456,7 +456,7 @@ const StartPage = () => {
       <section ref={howItWorksRef} className="py-24 px-6 bg-white relative overflow-hidden">
         <div className="container mx-auto">
           <h3 className="text-5xl font-bold text-center mb-20 bg-gradient-to-r from-green-500 to-orange-500 bg-clip-text text-transparent animate-gradient-shift">
-            How NeuroLens Works
+            How SmartReport AI Works
           </h3>
           
           {/* Workflow Timeline */}
@@ -637,7 +637,7 @@ const StartPage = () => {
               </h3>
               
               <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-                Join thousands of professionals who trust NeuroLens for intelligent report analysis. 
+                Join thousands of professionals who trust SmartReport AI for intelligent report analysis. 
                 Experience the AI revolution today!
               </p>
 
@@ -717,13 +717,13 @@ const StartPage = () => {
               <div className="absolute -inset-2 bg-orange-300/30 rounded-full opacity-0 group-hover:opacity-100 animate-pulse-ring"></div>
             </div>
             <span className="text-2xl font-bold text-gray-800 group-hover:text-orange-600 transition-colors duration-300">
-              NeuroLens
+              SmartReport AI
             </span>
           </div>
           
           <div className="space-y-2 mb-6">
             <p className="text-gray-600 font-semibold">
-              Powered by Multi-Agent AI | © {new Date().getFullYear()} NeuroLens Technologies
+              Powered by Multi-Agent AI | © {new Date().getFullYear()} SmartReport AI Technologies
             </p>
             <p className="text-sm text-gray-500">
               Transforming report analysis with AI-driven innovation

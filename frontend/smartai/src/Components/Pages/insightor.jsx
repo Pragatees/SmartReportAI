@@ -19,7 +19,7 @@ const Brain = ({ className }) => (
     />
     <defs>
       <linearGradient id="brainGradient" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#f97316" />
+        <stop stopColor="#3b82f6" />
         <stop offset="1" stopColor="#10b981" />
       </linearGradient>
     </defs>
@@ -36,12 +36,12 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120, damping: 15 } },
 };
 const buttonVariants = {
-  hover: { scale: 1.1, rotate: 3, boxShadow: "0px 6px 12px rgba(0,0,0,0.2)" },
-  tap: { scale: 0.9 },
+  hover: { scale: 1.05, boxShadow: "0px 8px 16px rgba(0,0,0,0.2)" },
+  tap: { scale: 0.95 },
 };
 const insightVariants = {
   hidden: { opacity: 0, height: 0 },
-  visible: { opacity: 1, height: "auto", transition: { duration: 0.3, ease: "easeInOut" } },
+  visible: { opacity: 1, height: "auto", transition: { duration: 0.4, ease: "easeInOut" } },
 };
 
 const InsightAgent = () => {
@@ -91,11 +91,9 @@ const InsightAgent = () => {
     setLoading(true);
     setError("");
     try {
-      const themeValue = localStorage.getItem("theme"); // Preserve theme
-      localStorage.clear(); // Clear all localStorage
-      if (themeValue) {
-        localStorage.setItem("theme", themeValue); // Restore theme
-      }
+      const themeValue = localStorage.getItem("theme");
+      localStorage.clear();
+      if (themeValue) localStorage.setItem("theme", themeValue);
       setDomain("");
       setContent("");
       setInsights([]);
@@ -113,11 +111,9 @@ const InsightAgent = () => {
       }
 
       const data = await response.json();
-      console.log(data.message);
       alert("All data, including vector database, cleared successfully!");
     } catch (err) {
       setError(err.message || "Failed to clear vector database.");
-      console.error("Error clearing vector database:", err.message);
     } finally {
       setLoading(false);
     }
@@ -160,30 +156,39 @@ const InsightAgent = () => {
   return (
     <div
       className={`min-h-screen transition-colors duration-500 font-inter flex ${
-        theme === "light" ? "bg-gradient-to-br from-orange-50 to-emerald-50" : "bg-gradient-to-br from-gray-900 to-gray-800"
+        theme === "light" ? "bg-gradient-to-br from-blue-50 to-emerald-50" : "bg-gradient-to-br from-gray-900 to-gray-800"
       }`}
     >
       {/* Shared Styles */}
       <style>
         {`
           .gradient-text {
-            background: linear-gradient(90deg, #f97316, #10b981);
+            background: linear-gradient(90deg, #3b82f6, #10b981);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
           }
           .gradient-button {
-            background: linear-gradient(90deg, #f97316, #10b981);
+            background: linear-gradient(90deg, #3b82f6, #10b981);
+            transition: background 0.3s ease;
           }
           .gradient-button:hover {
-            background: linear-gradient(90deg, #ea580c, #059669);
+            background: linear-gradient(90deg, #2563eb, #059669);
           }
           .insight-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
           }
           .insight-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+          }
+          .input-shadow {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          }
+          @media (max-width: 640px) {
+            .insight-card {
+              margin-bottom: 1rem;
+            }
           }
         `}
       </style>
@@ -199,23 +204,26 @@ const InsightAgent = () => {
       />
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "ml-[280px]" : "ml-0"}`}>
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "lg:ml-[280px] ml-0" : "ml-0"} p-4 sm:p-6 lg:p-8`}>
         <motion.section
-          className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8"
+          className="max-w-7xl mx-auto"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
           <motion.header variants={itemVariants} className="mb-8 text-center">
-            <h1 className="text-3xl sm:text-4xl font-poppins font-bold gradient-text">
-              NeuroLens Insight Agent
-            </h1>
+            <div className="flex items-center justify-center space-x-3">
+              <Brain className="w-10 h-10" />
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-poppins font-bold gradient-text">
+                SmartReport AI
+              </h1>
+            </div>
             <p
-              className={`mt-2 text-lg sm:text-xl max-w-3xl mx-auto font-medium ${
-                theme === "light" ? "text-gray-700" : "text-gray-300"
+              className={`mt-3 text-base sm:text-lg lg:text-xl max-w-3xl mx-auto font-medium ${
+                theme === "light" ? "text-gray-600" : "text-gray-300"
               }`}
             >
-              Review the extracted domain and content from your PDF. Click below to gain valuable insights.
+              Unlock personalized insights from your documents with SmartReport AI's Multi-Agent Engine.
             </p>
           </motion.header>
 
@@ -223,15 +231,15 @@ const InsightAgent = () => {
           <AnimatePresence>
             {domain ? (
               <motion.div
-                className={`p-6 rounded-lg mb-8 ${
-                  theme === "light" ? "bg-orange-50/70 border-orange-100" : "bg-gray-800/70 border-gray-700"
-                } border flex items-center justify-center space-x-4 backdrop-blur-sm shadow-lg`}
+                className={`p-4 sm:p-6 rounded-xl mb-8 ${
+                  theme === "light" ? "bg-blue-50/80 border-blue-100" : "bg-gray-800/80 border-gray-700"
+                } border flex items-center justify-center space-x-4 backdrop-blur-sm input-shadow`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
               >
-                <FaInfoCircle className={`text-2xl ${theme === "light" ? "text-orange-500" : "text-emerald-400"}`} />
-                <p className={`text-sm font-semibold ${theme === "light" ? "text-gray-700" : "text-gray-300"}`}>
+                <FaInfoCircle className={`text-2xl ${theme === "light" ? "text-blue-500" : "text-emerald-400"}`} />
+                <p className={`text-sm sm:text-base font-semibold ${theme === "light" ? "text-gray-700" : "text-gray-300"}`}>
                   Identified Domain: <strong>{domain}</strong>
                 </p>
               </motion.div>
@@ -240,11 +248,11 @@ const InsightAgent = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className={`text-sm mb-8 text-center font-semibold ${
+                className={`text-sm sm:text-base mb-8 text-center font-semibold ${
                   theme === "light" ? "text-gray-600" : "text-gray-400"
                 }`}
               >
-                No domain identified yet. Please upload a PDF in the Identifier Agent.
+                No domain identified yet. Upload a PDF in the SmartReport AI Identifier.
               </motion.p>
             )}
           </AnimatePresence>
@@ -254,13 +262,13 @@ const InsightAgent = () => {
             <motion.textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Document content will appear here..."
-              rows={8}
-              className={`w-full p-4 rounded-lg border transition-colors duration-300 ${
+              placeholder="Enter or view document content here..."
+              rows={10}
+              className={`w-full p-4 sm:p-5 rounded-xl border transition-colors duration-300 ${
                 theme === "light"
-                  ? "bg-orange-50/70 border-orange-200 text-gray-800 focus:ring-orange-400"
-                  : "bg-gray-800/70 border-gray-600 text-gray-200 focus:ring-emerald-400"
-              } focus:outline-none focus:ring-2 resize-none shadow-lg`}
+                  ? "bg-blue-50/80 border-blue-200 text-gray-800 focus:ring-blue-400"
+                  : "bg-gray-800/80 border-gray-600 text-gray-200 focus:ring-emerald-400"
+              } focus:outline-none focus:ring-2 resize-none input-shadow`}
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
@@ -282,10 +290,10 @@ const InsightAgent = () => {
                   whileTap="tap"
                   onClick={handleGetInsights}
                   disabled={loading}
-                  className={`px-8 py-3 rounded-full font-semibold text-white font-medium gradient-button shadow-lg flex items-center space-x-2 ${
+                  className={`px-6 sm:px-8 py-3 rounded-full font-semibold text-white text-sm sm:text-base gradient-button input-shadow flex items-center space-x-2 ${
                     loading ? "opacity-50 cursor-not-allowed" : ""
                   }`}
-                  aria-label="Get valuable insights"
+                  aria-label="Generate insights with SmartReport AI"
                 >
                   {loading && (
                     <svg
@@ -322,7 +330,7 @@ const InsightAgent = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="text-red-500 text-sm mb-8 text-center font-semibold"
+                className="text-red-500 text-sm sm:text-base mb-8 text-center font-semibold"
               >
                 {error}
               </motion.p>
@@ -334,27 +342,27 @@ const InsightAgent = () => {
             <div>
               {insights.length > 0 ? (
                 <motion.div
-                  className={`p-6 rounded-lg mb-8 ${
-                    theme === "light" ? "bg-orange-50/70 border-orange-100" : "bg-gray-800/70 border-gray-700"
-                  } border backdrop-blur-sm shadow-lg`}
+                  className={`p-4 sm:p-6 rounded-xl mb-8 ${
+                    theme === "light" ? "bg-blue-50/80 border-blue-100" : "bg-gray-800/80 border-gray-700"
+                  } border backdrop-blur-sm input-shadow`}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
                 >
                   <h2
-                    className={`text-2xl font-poppins font-bold mb-6 ${
+                    className={`text-xl sm:text-2xl font-poppins font-bold mb-6 ${
                       theme === "light" ? "text-gray-800" : "text-gray-200"
                     }`}
                   >
-                    Document Insights
+                    SmartReport AI Insights
                   </h2>
                   <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     {insights.map((insight, i) => (
                       <motion.div
                         key={i}
-                        className={`insight-card p-6 rounded-lg ${
-                          theme === "light" ? "bg-white border-orange-200" : "bg-gray-900 border-gray-600"
-                        } border shadow-md`}
+                        className={`insight-card p-4 sm:p-6 rounded-lg ${
+                          theme === "light" ? "bg-white border-blue-200" : "bg-gray-900 border-gray-600"
+                        } border input-shadow`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
@@ -364,16 +372,16 @@ const InsightAgent = () => {
                           onClick={() => toggleInsight(i)}
                         >
                           <h3
-                            className={`text-lg font-semibold ${
+                            className={`text-base sm:text-lg font-semibold ${
                               theme === "light" ? "text-gray-800" : "text-gray-200"
                             }`}
                           >
                             {insight.title}
                           </h3>
                           {expanded[i] ? (
-                            <FaChevronUp className={theme === "light" ? "text-orange-500" : "text-emerald-400"} />
+                            <FaChevronUp className={theme === "light" ? "text-blue-500" : "text-emerald-400"} />
                           ) : (
-                            <FaChevronDown className={theme === "light" ? "text-orange-500" : "text-emerald-400"} />
+                            <FaChevronDown className={theme === "light" ? "text-blue-500" : "text-emerald-400"} />
                           )}
                         </div>
                         <AnimatePresence>
@@ -385,7 +393,7 @@ const InsightAgent = () => {
                               exit="hidden"
                             >
                               <p
-                                className={`text-sm font-medium mt-4 ${
+                                className={`text-sm sm:text-base font-medium mt-4 ${
                                   theme === "light" ? "text-gray-700" : "text-gray-300"
                                 }`}
                               >
@@ -394,13 +402,13 @@ const InsightAgent = () => {
                               {insight.supporting_data?.length > 0 && (
                                 <>
                                   <p
-                                    className={`text-sm font-medium mt-4 ${
+                                    className={`text-sm sm:text-base font-medium mt-4 ${
                                       theme === "light" ? "text-gray-700" : "text-gray-300"
                                     }`}
                                   >
                                     <strong>Supporting Data:</strong>
                                   </p>
-                                  <ul className="list-disc list-inside mt-2 text-sm space-y-1">
+                                  <ul className="list-disc list-inside mt-2 text-sm sm:text-base space-y-1">
                                     {insight.supporting_data.map((item, k) => (
                                       <li
                                         key={k}
@@ -415,13 +423,13 @@ const InsightAgent = () => {
                               {insight.risk_factors?.length > 0 && (
                                 <>
                                   <p
-                                    className={`text-sm font-medium mt-4 ${
+                                    className={`text-sm sm:text-base font-medium mt-4 ${
                                       theme === "light" ? "text-gray-700" : "text-gray-300"
                                     }`}
                                   >
                                     <strong>Risk Factors:</strong>
                                   </p>
-                                  <ul className="list-disc list-inside mt-2 text-sm space-y-1">
+                                  <ul className="list-disc list-inside mt-2 text-sm sm:text-base space-y-1">
                                     {insight.risk_factors.map((risk, k) => (
                                       <li
                                         key={k}
@@ -443,7 +451,7 @@ const InsightAgent = () => {
                     <motion.p
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className={`mt-8 text-sm font-semibold ${
+                      className={`mt-8 text-sm sm:text-base font-semibold ${
                         theme === "light" ? "text-gray-700" : "text-gray-300"
                       }`}
                     >
@@ -456,11 +464,11 @@ const InsightAgent = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className={`text-sm mb-8 text-center font-semibold ${
+                  className={`text-sm sm:text-base mb-8 text-center font-semibold ${
                     theme === "light" ? "text-gray-600" : "text-gray-400"
                   }`}
                 >
-                  No insights available. Click "Generate Insights" to generate insights.
+                  No insights available. Click "Generate Insights" to start analyzing with SmartReport AI.
                 </motion.p>
               )}
             </div>
@@ -469,13 +477,13 @@ const InsightAgent = () => {
           {/* Footer */}
           <motion.div
             className={`py-8 text-center text-sm font-medium ${
-              theme === "light" ? "text-gray-500 border-orange-200" : "text-gray-400 border-gray-700"
+              theme === "light" ? "text-gray-500 border-blue-200" : "text-gray-400 border-gray-700"
             } border-t`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 1 }}
           >
-            Powered by NeuroLens | &copy; {new Date().getFullYear()} xAI
+            Powered by SmartReport AI | &copy; {new Date().getFullYear()} xAI
           </motion.div>
         </motion.section>
       </div>

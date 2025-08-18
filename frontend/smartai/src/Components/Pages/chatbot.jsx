@@ -289,7 +289,7 @@ const ChatbotAgent = () => {
       <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "ml-[280px]" : "ml-0"}`}>
         <motion.section className="max-w-7xl mx-auto p-8" variants={containerVariants} initial="hidden" animate="visible">
           <motion.header variants={itemVariants} className="mb-8 text-center">
-            <h1 className="text-3xl font-poppins font-bold gradient-text">NeuroLens Chatbot</h1>
+            <h1 className="text-3xl font-poppins font-bold gradient-text">Smart Report AI Chatbot</h1>
             <p className={`mt-2 text-lg font-medium ${theme === "light" ? "text-gray-800" : "text-gray-300"}`}>
               Interact with our AI chatbot using insights from your uploaded content.
             </p>
@@ -490,7 +490,7 @@ const ChatbotAgent = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 1 }}
           >
-            Powered by NeuroLens | &copy; {new Date().getFullYear()} xAI
+            Powered by Smart Report AI | &copy; {new Date().getFullYear()} xAI
           </motion.footer>
         </motion.section>
       </div>
