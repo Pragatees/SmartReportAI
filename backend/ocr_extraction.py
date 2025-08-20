@@ -7,7 +7,11 @@ from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import JSONResponse
 from docx import Document
 
+# ✅ Set Tesseract executable path
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
 router = APIRouter(prefix="/ocr", tags=["OCR"])
+
 
 @router.post("/extract-text")
 async def extract_text(file: UploadFile = File(...)):
