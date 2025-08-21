@@ -7,6 +7,7 @@ import Suggestor from './Components/Pages/suggestor'
 import Chatbot from './Components/Pages/chatbot';
 import Report from './Components/Pages/report';
 import Side from './Components/Pages/sidebar';
+import Goal from './Components/Pages/goal';
 function App() {
   return (
     <Router>
@@ -18,6 +19,7 @@ function App() {
         <Route path="/bot" component={Chatbot} />
         <Route path="/report" component={Report} />
         <Route path="/sidebar" component={Side} />
+        <Route path="/goal" component={Goal}/>
       </Switch>
     </Router>
   );

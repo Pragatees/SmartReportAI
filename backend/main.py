@@ -6,6 +6,7 @@ from insights_generation import router as insights_router
 from suggestions_generation import router as suggestions_router
 from vector_database import router as vector_db_router
 from ocr_extraction import router as ocr_router  # ✅ Add this
+from goal import router as goal_router
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -27,6 +28,7 @@ app.include_router(domain_router)
 app.include_router(insights_router)
 app.include_router(suggestions_router)
 app.include_router(vector_db_router)
+app.include_router(goal_router)
 
 if __name__ == "__main__":
     import uvicorn

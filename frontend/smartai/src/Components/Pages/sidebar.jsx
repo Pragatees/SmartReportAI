@@ -1,5 +1,5 @@
 import React from "react";
-import { FaHome, FaLightbulb, FaRobot, FaComments, FaFilePdf, FaTrash, FaSun, FaMoon, FaBars } from "react-icons/fa";
+import { FaHome, FaLightbulb, FaRobot, FaComments, FaFilePdf, FaTrash, FaSun, FaMoon, FaBars, FaBullseye } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 // Brain SVG Component with Hover Animation
@@ -29,7 +29,7 @@ const Brain = ({ className }) => (
   </motion.svg>
 );
 
-// Animation Variants for Elements (no sidebar width animation)
+// Animation Variants for Elements
 const buttonVariants = {
   hover: { scale: 1.1, boxShadow: "0px 8px 16px rgba(0,0,0,0.25)", transition: { duration: 0.2 } },
   tap: { scale: 0.95, transition: { duration: 0.1 } },
@@ -46,6 +46,7 @@ const navItems = [
   { icon: <FaLightbulb />, text: "Insightor Agent", path: "/insight" },
   { icon: <FaRobot />, text: "Suggest Agent", path: "/suggest" },
   { icon: <FaComments />, text: "Chatbot", path: "/bot" },
+  { icon: <FaBullseye />, text: "Goal", path: "/goal" },
   { icon: <FaFilePdf />, text: "Final Report", path: "/report" },
 ];
 
