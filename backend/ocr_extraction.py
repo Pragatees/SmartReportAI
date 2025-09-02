@@ -3,12 +3,17 @@ import pytesseract
 from PIL import Image
 import io
 import os
+import shutil
 from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import JSONResponse
 from docx import Document
 
-# ✅ Set Tesseract executable path
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# ✅ Detect Tesseract executable path dynamically (Linux-friendly)
+tesseract_path = shutil.which("tesseract")
+if tesseract_path:
+    pytesseract.pytesseract.tesseract_cmd = tesseract_path
+else:
+    raise RuntimeError("Tesseract is not installed or not in PATH")
 
 router = APIRouter(prefix="/ocr", tags=["OCR"])
 
@@ -20,32 +25,32 @@ async def extract_text(file: UploadFile = File(...)):
         file_extension = os.path.splitext(file.filename)[1].lower()
         text = ""
 
+        # 📄 PDF Handling
         if file_extension == ".pdf":
             doc = fitz.open(stream=contents, filetype="pdf")
-            for page_num in range(doc.page_count):
+            for page_num in range(len(doc)):
                 page = doc[page_num]
-                page_text = page.get_text()
+                page_text = page.get_text("text")  # Extract normal text
+
                 if page_text.strip():
+                    # ✅ Normal text-based PDF
                     text += page_text + "\n"
                 else:
-                    img_list = page.get_images(full=True)
-                    for img_index, img in enumerate(img_list):
-                        xref = img[0]
-                        base_image = doc.extract_image(xref)
-                        image_bytes = base_image["image"]
-                        try:
-                            img_obj = Image.open(io.BytesIO(image_bytes))
-                            img_text = pytesseract.image_to_string(img_obj)
-                            text += img_text + "\n"
-                        except Exception as img_e:
-                            print(f"Image OCR error on page {page_num}: {img_e}")
+                    # ✅ Scanned PDF (render as image for OCR)
+                    pix = page.get_pixmap(dpi=300)  # High DPI for better OCR
+                    img = Image.open(io.BytesIO(pix.tobytes("png")))
+                    img_text = pytesseract.image_to_string(img)
+                    text += img_text + "\n"
+
                 text += f"\n--- End of Page {page_num + 1} ---\n"
             doc.close()
 
+        # 🖼 Image Handling
         elif file_extension in [".png", ".jpg", ".jpeg", ".tif", ".tiff"]:
             img = Image.open(io.BytesIO(contents))
             text = pytesseract.image_to_string(img)
 
+        # 📑 Word Document Handling
         elif file_extension in [".doc", ".docx"]:
             try:
                 doc = Document(io.BytesIO(contents))
@@ -58,14 +63,18 @@ async def extract_text(file: UploadFile = File(...)):
                             if cell.text.strip():
                                 text += cell.text + "\n"
             except Exception as doc_e:
-                print(f"Word document processing error: {doc_e}")
-                return JSONResponse(content={"error": f"Failed to process Word document: {str(doc_e)}"}, status_code=400)
+                return JSONResponse(
+                    content={"error": f"Failed to process Word document: {str(doc_e)}"},
+                    status_code=400
+                )
 
         else:
-            return JSONResponse(content={"error": f"Unsupported file format: {file_extension}"}, status_code=400)
+            return JSONResponse(
+                content={"error": f"Unsupported file format: {file_extension}"},
+                status_code=400
+            )
 
-        return {"filename": file.filename, "text": text}
+        return {"filename": file.filename, "text": text.strip()}
 
     except Exception as e:
-        print(f"General error: {str(e)}")
         return JSONResponse(content={"error": str(e)}, status_code=500)
