@@ -7,4 +7,5 @@ numpy==2.1.2
 pydantic==2.9.2
 python-dotenv==1.0.1
 pymupdf==1.23.21
-docx
+python-docx
+pip install fastapi uvicorn requests faiss-cpu numpy pydantic python-dotenv pymupdf python-docx python-multipart
